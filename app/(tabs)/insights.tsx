@@ -1,5 +1,6 @@
 import FactCard from '@/components/ui/FactCard';
 import ScreenHeader from '@/components/ui/ScreenHeader';
+import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/db/client';
 import { habitLogs, habits } from '@/db/schema';
@@ -118,6 +119,7 @@ export default function InsightsScreen() {
             key={p}
             style={[styles.periodBtn, period === p && styles.periodBtnActive]}
             onPress={() => setPeriod(p)}
+            accessibilityLabel={`View ${p} insights`}
           >
             <Text style={[styles.periodText, period === p && styles.periodTextActive]}>
               {p.charAt(0).toUpperCase() + p.slice(1)}
@@ -154,12 +156,12 @@ export default function InsightsScreen() {
             yAxisLabel=""
             yAxisSuffix=""
             chartConfig={{
-              backgroundColor: '#fff',
-              backgroundGradientFrom: '#fff',
-              backgroundGradientTo: '#fff',
+              backgroundColor: COLOURS.card,
+              backgroundGradientFrom: COLOURS.card,
+              backgroundGradientTo: COLOURS.card,
               decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(108, 99, 255, ${opacity})`,
-              labelColor: () => '#888',
+              color: (opacity = 1) => `rgba(22, 163, 74, ${opacity})`,
+              labelColor: () => COLOURS.textSecondary,
               barPercentage: 0.6,
             }}
             style={{ borderRadius: 8 }}
@@ -173,23 +175,23 @@ export default function InsightsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: '#f5f5f5' },
+  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
   periodRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
   periodBtn: {
     flex: 1,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: COLOURS.border,
     alignItems: 'center',
   },
-  periodBtnActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  periodText: { fontWeight: '600', color: '#333' },
+  periodBtnActive: { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
+  periodText: { fontWeight: '600', color: COLOURS.textPrimary },
   periodTextActive: { color: '#fff' },
   statsRow: { flexDirection: 'row', gap: 12, marginBottom: 20 },
   statCard: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLOURS.card,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -198,10 +200,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  statValue: { fontSize: 22, fontWeight: 'bold', color: '#6C63FF' },
-  statLabel: { fontSize: 11, color: '#888', marginTop: 4 },
+  statValue: { fontSize: 22, fontWeight: 'bold', color: COLOURS.primary },
+  statLabel: { fontSize: 11, color: COLOURS.textSecondary, marginTop: 4 },
   chartCard: {
-    backgroundColor: '#fff',
+    backgroundColor: COLOURS.card,
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -209,6 +211,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  chartTitle: { fontSize: 16, fontWeight: '600', color: '#1a1a1a', marginBottom: 8 },
-  noData: { textAlign: 'center', color: '#888', paddingVertical: 40 },
+  chartTitle: { fontSize: 16, fontWeight: '600', color: COLOURS.textPrimary, marginBottom: 8 },
+  noData: { textAlign: 'center', color: COLOURS.textSecondary, paddingVertical: 40 },
 });

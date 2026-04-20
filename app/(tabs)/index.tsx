@@ -4,6 +4,7 @@ import StreakBadge from '@/components/habits/StreakBadge';
 import EmptyState from '@/components/ui/EmptyState';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import ScreenHeader from '@/components/ui/ScreenHeader';
+import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/db/client';
 import { categories, habitLogs, habits } from '@/db/schema';
@@ -117,10 +118,8 @@ export default function HabitsScreen() {
     const cats = await db.select().from(categories).where(eq(categories.userId, user!.id));
     const habs = await db.select().from(habits).where(eq(habits.userId, user!.id));
     const logs = await db.select().from(habitLogs);
-
     setCategoryList(cats);
     setHabitList(habs);
-
     const streaks: Record<number, number> = {};
     for (const hab of habs) {
       streaks[hab.id] = calculateStreak(logs, hab.id);
@@ -200,6 +199,7 @@ export default function HabitsScreen() {
             placeholder="Search habits..."
             value={searchText}
             onChangeText={setSearchText}
+            accessibilityLabel="Search habits"
           />
           <Text style={styles.filterLabel}>Filter by date</Text>
           <View style={styles.dateRow}>
@@ -208,6 +208,7 @@ export default function HabitsScreen() {
                 key={d}
                 style={[styles.dateBtn, dateRange === d && styles.dateBtnActive]}
                 onPress={() => setDateRange(d)}
+                accessibilityLabel={`Filter by ${d}`}
               >
                 <Text style={[styles.dateText, dateRange === d && styles.dateTextActive]}>
                   {d.charAt(0).toUpperCase() + d.slice(1)}
@@ -220,6 +221,7 @@ export default function HabitsScreen() {
             <TouchableOpacity
               style={[styles.filterBtn, selectedCategory === null && styles.filterBtnActive]}
               onPress={() => setSelectedCategory(null)}
+              accessibilityLabel="Show all categories"
             >
               <Text style={[styles.filterText, selectedCategory === null && styles.filterTextActive]}>
                 All
@@ -230,6 +232,7 @@ export default function HabitsScreen() {
                 key={cat.id}
                 style={[styles.filterBtn, selectedCategory === cat.id && { backgroundColor: cat.colour, borderColor: cat.colour }]}
                 onPress={() => setSelectedCategory(cat.id)}
+                accessibilityLabel={`Filter by ${cat.name}`}
               >
                 <Text style={[styles.filterText, selectedCategory === cat.id && { color: '#fff' }]}>
                   {cat.name}
@@ -277,29 +280,29 @@ export default function HabitsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: '#f5f5f5' },
+  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
   searchInput: {
-    backgroundColor: '#fff',
+    backgroundColor: COLOURS.card,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: COLOURS.border,
     marginBottom: 12,
   },
-  filterLabel: { fontSize: 12, fontWeight: '700', color: '#888', marginBottom: 8 },
+  filterLabel: { fontSize: 12, fontWeight: '700', color: COLOURS.textSecondary, marginBottom: 8 },
   dateRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
   dateBtn: {
     flex: 1,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: COLOURS.border,
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: COLOURS.card,
   },
-  dateBtnActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  dateText: { fontSize: 12, fontWeight: '600', color: '#333' },
+  dateBtnActive: { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
+  dateText: { fontSize: 12, fontWeight: '600', color: COLOURS.textPrimary },
   dateTextActive: { color: '#fff' },
   categoryFilter: { marginBottom: 16 },
   filterBtn: {
@@ -307,12 +310,12 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: COLOURS.border,
     marginRight: 8,
-    backgroundColor: '#fff',
+    backgroundColor: COLOURS.card,
   },
-  filterBtnActive: { backgroundColor: '#6C63FF', borderColor: '#6C63FF' },
-  filterText: { fontSize: 13, fontWeight: '600', color: '#333' },
+  filterBtnActive: { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
+  filterText: { fontSize: 13, fontWeight: '600', color: COLOURS.textPrimary },
   filterTextActive: { color: '#fff' },
   streakContainer: { marginTop: -8, marginBottom: 8, paddingLeft: 16 },
 });

@@ -1,10 +1,18 @@
 import FormField from '@/components/ui/FormField';
 import PrimaryButton from '@/components/ui/PrimaryButton';
+import { COLOURS } from '@/constants/theme';
 import { useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const COLOURS = ['#6C63FF', '#43C59E', '#FF6584', '#FFB347', '#4FC3F7', '#FF7043', '#AB47BC'];
-const ICONS = ['Run', 'Read', 'Health', 'Mind', 'Strength', 'Water', 'Goal', 'Art', 'Music', 'Sleep', 'Focus', 'Love'];
+const COLOUR_OPTIONS = [
+  '#16A34A', '#43C59E', '#FF6584', '#FFB347',
+  '#4FC3F7', '#FF7043', '#AB47BC', '#3B5BDB',
+];
+
+const ICON_OPTIONS = [
+  'Run', 'Read', 'Health', 'Mind', 'Strength',
+  'Water', 'Goal', 'Art', 'Music', 'Sleep', 'Focus', 'Love',
+];
 
 type CategoryFormProps = {
   initialName?: string;
@@ -16,7 +24,7 @@ type CategoryFormProps = {
 
 export default function CategoryForm({
   initialName = '',
-  initialColour = '#6C63FF',
+  initialColour = '#16A34A',
   initialIcon = 'Goal',
   onSubmit,
   submitLabel = 'Save',
@@ -43,21 +51,23 @@ export default function CategoryForm({
       />
       <Text style={styles.label}>Colour</Text>
       <View style={styles.colourRow}>
-        {COLOURS.map((c) => (
+        {COLOUR_OPTIONS.map((c) => (
           <TouchableOpacity
             key={c}
             style={[styles.colourDot, { backgroundColor: c }, colour === c && styles.colourSelected]}
             onPress={() => setColour(c)}
+            accessibilityLabel={`Select colour ${c}`}
           />
         ))}
       </View>
       <Text style={styles.label}>Icon</Text>
       <View style={styles.iconRow}>
-        {ICONS.map((i) => (
+        {ICON_OPTIONS.map((i) => (
           <TouchableOpacity
             key={i}
             style={[styles.iconBtn, { borderColor: colour }, icon === i && { backgroundColor: colour }]}
             onPress={() => setIcon(i)}
+            accessibilityLabel={`Select icon ${i}`}
           >
             <Text style={[styles.iconText, icon === i && { color: '#fff' }]}>{i}</Text>
           </TouchableOpacity>
@@ -69,10 +79,10 @@ export default function CategoryForm({
 }
 
 const styles = StyleSheet.create({
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: '#333' },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: COLOURS.textPrimary },
   colourRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
   colourDot: { width: 32, height: 32, borderRadius: 16 },
-  colourSelected: { borderWidth: 3, borderColor: '#1a1a1a' },
+  colourSelected: { borderWidth: 3, borderColor: COLOURS.textPrimary },
   iconRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   iconBtn: {
     paddingHorizontal: 10,
@@ -82,5 +92,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconText: { fontSize: 12, fontWeight: '600', color: '#333' },
+  iconText: { fontSize: 12, fontWeight: '600', color: COLOURS.textPrimary },
 });

@@ -3,6 +3,7 @@ import CategoryForm from '@/components/categories/CategoryForm';
 import EmptyState from '@/components/ui/EmptyState';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import ScreenHeader from '@/components/ui/ScreenHeader';
+import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/db/client';
 import { categories } from '@/db/schema';
@@ -92,6 +93,7 @@ export default function CategoriesScreen() {
         <FlatList
           data={categoryList}
           keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={false}
           renderItem={({ item }) => (
             <CategoryCard
               name={item.name}
@@ -101,7 +103,6 @@ export default function CategoriesScreen() {
               onDelete={() => handleDelete(item.id)}
             />
           )}
-          scrollEnabled={false}
         />
       )}
     </ScrollView>
@@ -109,5 +110,5 @@ export default function CategoriesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: '#f5f5f5' },
+  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
 });
