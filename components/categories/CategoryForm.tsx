@@ -1,6 +1,6 @@
 import FormField from '@/components/ui/FormField';
 import PrimaryButton from '@/components/ui/PrimaryButton';
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -29,6 +29,7 @@ export default function CategoryForm({
   onSubmit,
   submitLabel = 'Save',
 }: CategoryFormProps) {
+  const { colours: COLOURS } = useTheme();
   const [name, setName] = useState(initialName);
   const [colour, setColour] = useState(initialColour);
   const [icon, setIcon] = useState(initialIcon);
@@ -49,18 +50,18 @@ export default function CategoryForm({
         value={name}
         onChangeText={setName}
       />
-      <Text style={styles.label}>Colour</Text>
+      <Text style={[styles.label, { color: COLOURS.textPrimary }]}>Colour</Text>
       <View style={styles.colourRow}>
         {COLOUR_OPTIONS.map((c) => (
           <TouchableOpacity
             key={c}
-            style={[styles.colourDot, { backgroundColor: c }, colour === c && styles.colourSelected]}
+            style={[styles.colourDot, { backgroundColor: c }, colour === c && { borderWidth: 3, borderColor: COLOURS.textPrimary }]}
             onPress={() => setColour(c)}
             accessibilityLabel={`Select colour ${c}`}
           />
         ))}
       </View>
-      <Text style={styles.label}>Icon</Text>
+      <Text style={[styles.label, { color: COLOURS.textPrimary }]}>Icon</Text>
       <View style={styles.iconRow}>
         {ICON_OPTIONS.map((i) => (
           <TouchableOpacity
@@ -69,7 +70,7 @@ export default function CategoryForm({
             onPress={() => setIcon(i)}
             accessibilityLabel={`Select icon ${i}`}
           >
-            <Text style={[styles.iconText, icon === i && { color: '#fff' }]}>{i}</Text>
+            <Text style={[styles.iconText, { color: COLOURS.textPrimary }, icon === i && { color: '#fff' }]}>{i}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -79,10 +80,9 @@ export default function CategoryForm({
 }
 
 const styles = StyleSheet.create({
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: COLOURS.textPrimary },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 8 },
   colourRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 16 },
   colourDot: { width: 32, height: 32, borderRadius: 16 },
-  colourSelected: { borderWidth: 3, borderColor: COLOURS.textPrimary },
   iconRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   iconBtn: {
     paddingHorizontal: 10,
@@ -92,5 +92,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconText: { fontSize: 12, fontWeight: '600', color: COLOURS.textPrimary },
+  iconText: { fontSize: 12, fontWeight: '600' },
 });

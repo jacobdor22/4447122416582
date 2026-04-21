@@ -1,4 +1,4 @@
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { StyleSheet, Text, View } from 'react-native';
 
 type StreakBadgeProps = {
@@ -6,6 +6,8 @@ type StreakBadgeProps = {
 };
 
 export default function StreakBadge({ streak }: StreakBadgeProps) {
+  const { colours: COLOURS } = useTheme();
+
   const getColour = () => {
     if (streak >= 14) return COLOURS.danger;
     if (streak >= 7) return COLOURS.warning;

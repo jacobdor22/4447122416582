@@ -1,7 +1,7 @@
 import FactCard from '@/components/ui/FactCard';
 import ScreenHeader from '@/components/ui/ScreenHeader';
-import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { habitLogs, habits } from '@/db/schema';
 import { fetchDateFact, fetchStreakFact } from '@/utils/fetchNumberFact';
@@ -16,6 +16,7 @@ const screenWidth = Dimensions.get('window').width - 48;
 
 export default function InsightsScreen() {
   const { user } = useAuth();
+  const { colours: COLOURS } = useTheme();
   const [period, setPeriod] = useState<Period>('weekly');
   const [chartData, setChartData] = useState<{ labels: string[]; values: number[] }>({ labels: [], values: [] });
   const [totalLogs, setTotalLogs] = useState(0);
@@ -107,7 +108,7 @@ export default function InsightsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: COLOURS.background }]}>
       <ScreenHeader title="Insights" subtitle="Your habit progress" />
 
       <FactCard title="Daily motivation" fact={dateFact} loading={loadingDateFact} />
@@ -117,11 +118,11 @@ export default function InsightsScreen() {
         {(['daily', 'weekly', 'monthly'] as Period[]).map((p) => (
           <TouchableOpacity
             key={p}
-            style={[styles.periodBtn, period === p && styles.periodBtnActive]}
+            style={[styles.periodBtn, { borderColor: COLOURS.border }, period === p && { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary }]}
             onPress={() => setPeriod(p)}
             accessibilityLabel={`View ${p} insights`}
           >
-            <Text style={[styles.periodText, period === p && styles.periodTextActive]}>
+            <Text style={[styles.periodText, { color: COLOURS.textPrimary }, period === p && styles.periodTextActive]}>
               {p.charAt(0).toUpperCase() + p.slice(1)}
             </Text>
           </TouchableOpacity>
@@ -129,22 +130,22 @@ export default function InsightsScreen() {
       </View>
 
       <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{totalLogs}</Text>
-          <Text style={styles.statLabel}>Total logs</Text>
+        <View style={[styles.statCard, { backgroundColor: COLOURS.card }]}>
+          <Text style={[styles.statValue, { color: COLOURS.primary }]}>{totalLogs}</Text>
+          <Text style={[styles.statLabel, { color: COLOURS.textSecondary }]}>Total logs</Text>
         </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{completionRate}%</Text>
-          <Text style={styles.statLabel}>Completion</Text>
+        <View style={[styles.statCard, { backgroundColor: COLOURS.card }]}>
+          <Text style={[styles.statValue, { color: COLOURS.primary }]}>{completionRate}%</Text>
+          <Text style={[styles.statLabel, { color: COLOURS.textSecondary }]}>Completion</Text>
         </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue} numberOfLines={1}>{mostActive}</Text>
-          <Text style={styles.statLabel}>Most active</Text>
+        <View style={[styles.statCard, { backgroundColor: COLOURS.card }]}>
+          <Text style={[styles.statValue, { color: COLOURS.primary }]} numberOfLines={1}>{mostActive}</Text>
+          <Text style={[styles.statLabel, { color: COLOURS.textSecondary }]}>Most active</Text>
         </View>
       </View>
 
-      <View style={styles.chartCard}>
-        <Text style={styles.chartTitle}>Completions by habit</Text>
+      <View style={[styles.chartCard, { backgroundColor: COLOURS.card }]}>
+        <Text style={[styles.chartTitle, { color: COLOURS.textPrimary }]}>Completions by habit</Text>
         {chartData.labels.length > 0 ? (
           <BarChart
             data={{
@@ -167,7 +168,7 @@ export default function InsightsScreen() {
             style={{ borderRadius: 8 }}
           />
         ) : (
-          <Text style={styles.noData}>No data for this period</Text>
+          <Text style={[styles.noData, { color: COLOURS.textSecondary }]}>No data for this period</Text>
         )}
       </View>
     </ScrollView>
@@ -175,23 +176,20 @@ export default function InsightsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
+  container: { flex: 1, padding: 24 },
   periodRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
   periodBtn: {
     flex: 1,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLOURS.border,
     alignItems: 'center',
   },
-  periodBtnActive: { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
-  periodText: { fontWeight: '600', color: COLOURS.textPrimary },
   periodTextActive: { color: '#fff' },
+  periodText: { fontWeight: '600' },
   statsRow: { flexDirection: 'row', gap: 12, marginBottom: 20 },
   statCard: {
     flex: 1,
-    backgroundColor: COLOURS.card,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -200,10 +198,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  statValue: { fontSize: 22, fontWeight: 'bold', color: COLOURS.primary },
-  statLabel: { fontSize: 11, color: COLOURS.textSecondary, marginTop: 4 },
+  statValue: { fontSize: 22, fontWeight: 'bold' },
+  statLabel: { fontSize: 11, marginTop: 4 },
   chartCard: {
-    backgroundColor: COLOURS.card,
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -211,6 +208,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  chartTitle: { fontSize: 16, fontWeight: '600', color: COLOURS.textPrimary, marginBottom: 8 },
-  noData: { textAlign: 'center', color: COLOURS.textSecondary, paddingVertical: 40 },
+  chartTitle: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
+  noData: { textAlign: 'center', paddingVertical: 40 },
 });

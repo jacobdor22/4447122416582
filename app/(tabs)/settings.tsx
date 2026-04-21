@@ -1,6 +1,5 @@
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import ScreenHeader from '@/components/ui/ScreenHeader';
-import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
@@ -15,7 +14,7 @@ import { Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native'
 
 export default function SettingsScreen() {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, colours: COLOURS } = useTheme();
   const router = useRouter();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -80,22 +79,22 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: COLOURS.background }]}>
       <ScreenHeader title="Settings" />
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        <View style={styles.card}>
-          <Text style={styles.label}>Logged in as</Text>
-          <Text style={styles.value}>{user?.email}</Text>
+        <Text style={[styles.sectionTitle, { color: COLOURS.textSecondary }]}>Account</Text>
+        <View style={[styles.card, { backgroundColor: COLOURS.card }]}>
+          <Text style={[styles.label, { color: COLOURS.textSecondary }]}>Logged in as</Text>
+          <Text style={[styles.value, { color: COLOURS.textPrimary }]}>{user?.email}</Text>
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Appearance</Text>
-        <View style={styles.card}>
-          <Text style={styles.label}>Theme</Text>
-          <Text style={styles.value}>{theme === 'light' ? 'Light mode' : 'Dark mode'}</Text>
+        <Text style={[styles.sectionTitle, { color: COLOURS.textSecondary }]}>Appearance</Text>
+        <View style={[styles.card, { backgroundColor: COLOURS.card }]}>
+          <Text style={[styles.label, { color: COLOURS.textSecondary }]}>Theme</Text>
+          <Text style={[styles.value, { color: COLOURS.textPrimary }]}>{theme === 'light' ? 'Light mode' : 'Dark mode'}</Text>
         </View>
         <PrimaryButton
           title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
@@ -104,9 +103,9 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Notifications</Text>
-        <View style={styles.card}>
-          <Text style={styles.label}>Daily reminder at 8pm</Text>
+        <Text style={[styles.sectionTitle, { color: COLOURS.textSecondary }]}>Notifications</Text>
+        <View style={[styles.card, { backgroundColor: COLOURS.card }]}>
+          <Text style={[styles.label, { color: COLOURS.textSecondary }]}>Daily reminder at 8pm</Text>
           <Switch
             value={notificationsEnabled}
             onValueChange={toggleNotifications}
@@ -116,7 +115,7 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Data</Text>
+        <Text style={[styles.sectionTitle, { color: COLOURS.textSecondary }]}>Data</Text>
         <PrimaryButton
           title="Export Habits to CSV"
           onPress={() => user && exportHabitsCSV(user.id)}
@@ -124,7 +123,7 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Danger zone</Text>
+        <Text style={[styles.sectionTitle, { color: COLOURS.textSecondary }]}>Danger zone</Text>
         <PrimaryButton title="Log out" onPress={handleLogout} />
         <View style={styles.gap} />
         <PrimaryButton title="Delete Profile" onPress={handleDeleteProfile} />
@@ -134,11 +133,10 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
+  container: { flex: 1, padding: 24 },
   section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 13, fontWeight: '700', color: COLOURS.textSecondary, marginBottom: 8 },
+  sectionTitle: { fontSize: 13, fontWeight: '700', marginBottom: 8 },
   card: {
-    backgroundColor: COLOURS.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -150,7 +148,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  label: { fontSize: 12, color: COLOURS.textSecondary, marginBottom: 4 },
-  value: { fontSize: 16, fontWeight: '600', color: COLOURS.textPrimary },
+  label: { fontSize: 12, marginBottom: 4 },
+  value: { fontSize: 16, fontWeight: '600' },
   gap: { height: 8 },
 });

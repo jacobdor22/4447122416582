@@ -1,4 +1,4 @@
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 type FormFieldProps = {
@@ -18,12 +18,15 @@ export default function FormField({
   secureTextEntry = false,
   keyboardType = 'default',
 }: FormFieldProps) {
+  const { colours: COLOURS } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label} accessibilityLabel={label}>{label}</Text>
+      <Text style={[styles.label, { color: COLOURS.textPrimary }]} accessibilityLabel={label}>{label}</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: COLOURS.border, backgroundColor: COLOURS.card, color: COLOURS.textPrimary }]}
         placeholder={placeholder}
+        placeholderTextColor={COLOURS.textSecondary}
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
@@ -37,13 +40,11 @@ export default function FormField({
 
 const styles = StyleSheet.create({
   container: { marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 6, color: COLOURS.textPrimary },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
   input: {
     borderWidth: 1,
-    borderColor: COLOURS.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: COLOURS.card,
   },
 });

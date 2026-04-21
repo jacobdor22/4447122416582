@@ -4,8 +4,8 @@ import StreakBadge from '@/components/habits/StreakBadge';
 import EmptyState from '@/components/ui/EmptyState';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import ScreenHeader from '@/components/ui/ScreenHeader';
-import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { categories, habitLogs, habits } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -31,6 +31,7 @@ type DateRange = 'all' | 'today' | 'week' | 'month';
 
 export default function HabitsScreen() {
   const { user } = useAuth();
+  const { colours: COLOURS } = useTheme();
   const router = useRouter();
   const [habitList, setHabitList] = useState<Habit[]>([]);
   const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -176,7 +177,7 @@ export default function HabitsScreen() {
     categoryList.find((c) => c.id === id) ?? { name: 'Unknown', colour: '#ccc' };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: COLOURS.background }]}>
       <ScreenHeader title="My Habits" subtitle={`${habitList.length} habits tracked`} />
       {!showForm && (
         <PrimaryButton title="+ Add Habit" onPress={() => { setEditingHabit(null); setShowForm(true); }} />
@@ -195,46 +196,47 @@ export default function HabitsScreen() {
       {!showForm && (
         <>
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { backgroundColor: COLOURS.card, borderColor: COLOURS.border, color: COLOURS.textPrimary }]}
             placeholder="Search habits..."
+            placeholderTextColor={COLOURS.textSecondary}
             value={searchText}
             onChangeText={setSearchText}
             accessibilityLabel="Search habits"
           />
-          <Text style={styles.filterLabel}>Filter by date</Text>
+          <Text style={[styles.filterLabel, { color: COLOURS.textSecondary }]}>Filter by date</Text>
           <View style={styles.dateRow}>
             {(['all', 'today', 'week', 'month'] as DateRange[]).map(d => (
               <TouchableOpacity
                 key={d}
-                style={[styles.dateBtn, dateRange === d && styles.dateBtnActive]}
+                style={[styles.dateBtn, { borderColor: COLOURS.border, backgroundColor: COLOURS.card }, dateRange === d && { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary }]}
                 onPress={() => setDateRange(d)}
                 accessibilityLabel={`Filter by ${d}`}
               >
-                <Text style={[styles.dateText, dateRange === d && styles.dateTextActive]}>
+                <Text style={[styles.dateText, { color: COLOURS.textPrimary }, dateRange === d && styles.dateTextActive]}>
                   {d.charAt(0).toUpperCase() + d.slice(1)}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
-          <Text style={styles.filterLabel}>Filter by category</Text>
+          <Text style={[styles.filterLabel, { color: COLOURS.textSecondary }]}>Filter by category</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryFilter}>
             <TouchableOpacity
-              style={[styles.filterBtn, selectedCategory === null && styles.filterBtnActive]}
+              style={[styles.filterBtn, { borderColor: COLOURS.border, backgroundColor: COLOURS.card }, selectedCategory === null && { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary }]}
               onPress={() => setSelectedCategory(null)}
               accessibilityLabel="Show all categories"
             >
-              <Text style={[styles.filterText, selectedCategory === null && styles.filterTextActive]}>
+              <Text style={[styles.filterText, { color: COLOURS.textPrimary }, selectedCategory === null && styles.filterTextActive]}>
                 All
               </Text>
             </TouchableOpacity>
             {categoryList.map(cat => (
               <TouchableOpacity
                 key={cat.id}
-                style={[styles.filterBtn, selectedCategory === cat.id && { backgroundColor: cat.colour, borderColor: cat.colour }]}
+                style={[styles.filterBtn, { borderColor: COLOURS.border, backgroundColor: COLOURS.card }, selectedCategory === cat.id && { backgroundColor: cat.colour, borderColor: cat.colour }]}
                 onPress={() => setSelectedCategory(cat.id)}
                 accessibilityLabel={`Filter by ${cat.name}`}
               >
-                <Text style={[styles.filterText, selectedCategory === cat.id && { color: '#fff' }]}>
+                <Text style={[styles.filterText, { color: COLOURS.textPrimary }, selectedCategory === cat.id && { color: '#fff' }]}>
                   {cat.name}
                 </Text>
               </TouchableOpacity>
@@ -280,29 +282,24 @@ export default function HabitsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
+  container: { flex: 1, padding: 24 },
   searchInput: {
-    backgroundColor: COLOURS.card,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: COLOURS.border,
     marginBottom: 12,
   },
-  filterLabel: { fontSize: 12, fontWeight: '700', color: COLOURS.textSecondary, marginBottom: 8 },
+  filterLabel: { fontSize: 12, fontWeight: '700', marginBottom: 8 },
   dateRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
   dateBtn: {
     flex: 1,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLOURS.border,
     alignItems: 'center',
-    backgroundColor: COLOURS.card,
   },
-  dateBtnActive: { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
-  dateText: { fontSize: 12, fontWeight: '600', color: COLOURS.textPrimary },
+  dateText: { fontSize: 12, fontWeight: '600' },
   dateTextActive: { color: '#fff' },
   categoryFilter: { marginBottom: 16 },
   filterBtn: {
@@ -310,12 +307,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: COLOURS.border,
     marginRight: 8,
-    backgroundColor: COLOURS.card,
   },
-  filterBtnActive: { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
-  filterText: { fontSize: 13, fontWeight: '600', color: COLOURS.textPrimary },
+  filterBtnActive: { },
+  filterText: { fontSize: 13, fontWeight: '600' },
   filterTextActive: { color: '#fff' },
   streakContainer: { marginTop: -8, marginBottom: 8, paddingLeft: 16 },
 });

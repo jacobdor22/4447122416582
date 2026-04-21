@@ -3,8 +3,8 @@ import CategoryForm from '@/components/categories/CategoryForm';
 import EmptyState from '@/components/ui/EmptyState';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import ScreenHeader from '@/components/ui/ScreenHeader';
-import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { categories } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -20,6 +20,7 @@ type Category = {
 
 export default function CategoriesScreen() {
   const { user } = useAuth();
+  const { colours: COLOURS } = useTheme();
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -70,7 +71,7 @@ export default function CategoriesScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: COLOURS.background }]}>
       <ScreenHeader title="Categories" subtitle={`${categoryList.length} categories`} />
       {!showForm && (
         <PrimaryButton
@@ -110,5 +111,5 @@ export default function CategoriesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
+  container: { flex: 1, padding: 24 },
 });

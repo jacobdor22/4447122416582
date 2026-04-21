@@ -1,7 +1,7 @@
 import EmptyState from '@/components/ui/EmptyState';
 import ScreenHeader from '@/components/ui/ScreenHeader';
-import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { categories, habitLogs, habits } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
@@ -29,6 +29,7 @@ type LogEntry = {
 
 export default function LogScreen() {
   const { user } = useAuth();
+  const { colours: COLOURS } = useTheme();
   const [habitList, setHabitList] = useState<Habit[]>([]);
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -93,7 +94,7 @@ export default function LogScreen() {
     categoryList.find(c => c.id === id) ?? { name: 'Unknown', colour: '#ccc' };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: COLOURS.background }]}>
       <ScreenHeader title="Today's Log" subtitle={today} />
       {habitList.length === 0 ? (
         <EmptyState title="No habits yet" message="Add habits first from the Habits tab" />
@@ -106,36 +107,36 @@ export default function LogScreen() {
             const cat = getCategoryById(item.categoryId);
             const log = getLog(item.id);
             return (
-              <View style={styles.card}>
+              <View style={[styles.card, { backgroundColor: COLOURS.card }]}>
                 <View style={styles.left}>
                   <View style={[styles.dot, { backgroundColor: cat.colour }]} />
                   <View>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={styles.category}>{cat.name}</Text>
+                    <Text style={[styles.name, { color: COLOURS.textPrimary }]}>{item.name}</Text>
+                    <Text style={[styles.category, { color: COLOURS.textSecondary }]}>{cat.name}</Text>
                   </View>
                 </View>
                 {item.metricType === 'boolean' ? (
                   <TouchableOpacity
-                    style={[styles.checkBtn, log && styles.checkBtnDone]}
+                    style={[styles.checkBtn, { borderColor: COLOURS.primary }, log && { backgroundColor: COLOURS.primary }]}
                     onPress={() => toggleBoolean(item)}
                     accessibilityLabel={log ? `Mark ${item.name} as not done` : `Mark ${item.name} as done`}
                   >
-                    <Text style={[styles.checkText, log && styles.checkTextDone]}>
+                    <Text style={[styles.checkText, { color: COLOURS.primary }, log && styles.checkTextDone]}>
                       {log ? '✓ Done' : 'Mark Done'}
                     </Text>
                   </TouchableOpacity>
                 ) : (
                   <View style={styles.countRow}>
                     <TouchableOpacity
-                      style={styles.countBtn}
+                      style={[styles.countBtn, { backgroundColor: COLOURS.primary }]}
                       onPress={() => updateCount(item, -1)}
                       accessibilityLabel={`Decrease count for ${item.name}`}
                     >
                       <Text style={styles.countBtnText}>-</Text>
                     </TouchableOpacity>
-                    <Text style={styles.countValue}>{log?.count ?? 0}</Text>
+                    <Text style={[styles.countValue, { color: COLOURS.textPrimary }]}>{log?.count ?? 0}</Text>
                     <TouchableOpacity
-                      style={styles.countBtn}
+                      style={[styles.countBtn, { backgroundColor: COLOURS.primary }]}
                       onPress={() => updateCount(item, 1)}
                       accessibilityLabel={`Increase count for ${item.name}`}
                     >
@@ -153,9 +154,8 @@ export default function LogScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
+  container: { flex: 1, padding: 24 },
   card: {
-    backgroundColor: COLOURS.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -169,27 +169,24 @@ const styles = StyleSheet.create({
   },
   left: { flexDirection: 'row', alignItems: 'center', flex: 1 },
   dot: { width: 12, height: 12, borderRadius: 6, marginRight: 12 },
-  name: { fontSize: 16, fontWeight: '600', color: COLOURS.textPrimary },
-  category: { fontSize: 12, color: COLOURS.textSecondary, marginTop: 2 },
+  name: { fontSize: 16, fontWeight: '600' },
+  category: { fontSize: 12, marginTop: 2 },
   checkBtn: {
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLOURS.primary,
   },
-  checkBtnDone: { backgroundColor: COLOURS.primary },
-  checkText: { color: COLOURS.primary, fontWeight: '600', fontSize: 13 },
+  checkText: { fontWeight: '600', fontSize: 13 },
   checkTextDone: { color: '#fff' },
   countRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   countBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLOURS.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   countBtnText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  countValue: { fontSize: 18, fontWeight: 'bold', color: COLOURS.textPrimary, minWidth: 24, textAlign: 'center' },
+  countValue: { fontSize: 18, fontWeight: 'bold', minWidth: 24, textAlign: 'center' },
 });

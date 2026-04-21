@@ -1,4 +1,4 @@
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 type PrimaryButtonProps = {
@@ -12,9 +12,11 @@ export default function PrimaryButton({
   onPress,
   disabled = false,
 }: PrimaryButtonProps) {
+  const { colours: COLOURS } = useTheme();
+
   return (
     <TouchableOpacity
-      style={[styles.button, disabled && styles.disabled]}
+      style={[styles.button, { backgroundColor: COLOURS.primary }, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled}
       accessibilityLabel={title}
@@ -27,7 +29,6 @@ export default function PrimaryButton({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: COLOURS.primary,
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',

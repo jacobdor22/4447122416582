@@ -3,8 +3,8 @@ import TargetForm from '@/components/targets/TargetForm';
 import EmptyState from '@/components/ui/EmptyState';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import ScreenHeader from '@/components/ui/ScreenHeader';
-import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { habitLogs, habits, targets } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -25,6 +25,7 @@ type Habit = {
 
 export default function TargetsScreen() {
   const { user } = useAuth();
+  const { colours: COLOURS } = useTheme();
   const [targetList, setTargetList] = useState<Target[]>([]);
   const [habitList, setHabitList] = useState<Habit[]>([]);
   const [progressMap, setProgressMap] = useState<Record<number, number>>({});
@@ -106,7 +107,7 @@ export default function TargetsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: COLOURS.background }]}>
       <ScreenHeader title="Targets" subtitle={`${targetList.length} targets set`} />
       {!showForm && (
         <PrimaryButton
@@ -148,5 +149,5 @@ export default function TargetsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, backgroundColor: COLOURS.background },
+  container: { flex: 1, padding: 24 },
 });

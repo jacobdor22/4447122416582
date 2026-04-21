@@ -1,7 +1,7 @@
 import FormField from '@/components/ui/FormField';
 import PrimaryButton from '@/components/ui/PrimaryButton';
-import { COLOURS } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { categories, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -13,6 +13,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
+  const { colours: COLOURS } = useTheme();
   const router = useRouter();
 
   const handleRegister = async () => {
@@ -49,13 +50,13 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: COLOURS.background }]}>
       <View style={styles.logoContainer}>
         <Image source={require('@/assets/images/icon.png')} style={styles.logo} />
-        <Text style={styles.appName}>Habit Tracker</Text>
+        <Text style={[styles.appName, { color: COLOURS.textPrimary }]}>Habit Tracker</Text>
       </View>
-      <Text style={styles.title}>Create account</Text>
-      <Text style={styles.subtitle}>Start tracking your habits</Text>
+      <Text style={[styles.title, { color: COLOURS.textPrimary }]}>Create account</Text>
+      <Text style={[styles.subtitle, { color: COLOURS.textSecondary }]}>Start tracking your habits</Text>
       <FormField
         label="Email"
         placeholder="you@example.com"
@@ -71,7 +72,7 @@ export default function RegisterScreen() {
         secureTextEntry
       />
       <PrimaryButton title="Register" onPress={handleRegister} />
-      <Text style={styles.link} onPress={() => router.push('/(auth)/login')}>
+      <Text style={[styles.link, { color: COLOURS.primary }]} onPress={() => router.push('/(auth)/login')}>
         Already have an account? Log in
       </Text>
     </View>
@@ -79,11 +80,11 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center', backgroundColor: COLOURS.background },
+  container: { flex: 1, padding: 24, justifyContent: 'center' },
   logoContainer: { alignItems: 'center', marginBottom: 32 },
   logo: { width: 100, height: 100, borderRadius: 20, marginBottom: 12 },
-  appName: { fontSize: 18, fontWeight: '600', color: COLOURS.textPrimary },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8, color: COLOURS.textPrimary },
-  subtitle: { fontSize: 16, color: COLOURS.textSecondary, marginBottom: 32 },
-  link: { marginTop: 16, textAlign: 'center', color: COLOURS.primary },
+  appName: { fontSize: 18, fontWeight: '600' },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8 },
+  subtitle: { fontSize: 16, marginBottom: 32 },
+  link: { marginTop: 16, textAlign: 'center' },
 });

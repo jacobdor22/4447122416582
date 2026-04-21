@@ -1,6 +1,6 @@
 import FormField from '@/components/ui/FormField';
 import PrimaryButton from '@/components/ui/PrimaryButton';
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -34,6 +34,7 @@ export default function HabitForm({
   onSubmit,
   submitLabel = 'Save',
 }: HabitFormProps) {
+  const { colours: COLOURS } = useTheme();
   const [name, setName] = useState(initialName);
   const [notes, setNotes] = useState(initialNotes);
   const [metricType, setMetricType] = useState(initialMetricType);
@@ -63,24 +64,28 @@ export default function HabitForm({
         value={notes}
         onChangeText={setNotes}
       />
-      <Text style={styles.label}>Metric type</Text>
+      <Text style={[styles.label, { color: COLOURS.textPrimary }]}>Metric type</Text>
       <View style={styles.row}>
         <View style={styles.toggleRow}>
           {['boolean', 'count'].map((type) => (
             <TouchableOpacity
               key={type}
-              style={[styles.toggleBtn, metricType === type && styles.toggleActive]}
+              style={[
+                styles.toggleBtn,
+                { borderColor: COLOURS.border },
+                metricType === type && { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
+              ]}
               onPress={() => setMetricType(type)}
               accessibilityLabel={`Set metric type to ${type === 'boolean' ? 'Yes/No' : 'Count'}`}
             >
-              <Text style={[styles.toggleText, metricType === type && styles.toggleTextActive]}>
+              <Text style={[styles.toggleText, { color: COLOURS.textPrimary }, metricType === type && styles.toggleTextActive]}>
                 {type === 'boolean' ? 'Yes/No' : 'Count'}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
       </View>
-      <Text style={styles.label}>Category</Text>
+      <Text style={[styles.label, { color: COLOURS.textPrimary }]}>Category</Text>
       <View style={styles.categoryRow}>
         {categories.map((cat) => (
           <TouchableOpacity
@@ -93,7 +98,7 @@ export default function HabitForm({
             onPress={() => setCategoryId(cat.id)}
             accessibilityLabel={`Select category ${cat.name}`}
           >
-            <Text style={[styles.categoryText, categoryId === cat.id && { color: '#fff' }]}>
+            <Text style={[styles.categoryText, { color: COLOURS.textPrimary }, categoryId === cat.id && { color: '#fff' }]}>
               {cat.name}
             </Text>
           </TouchableOpacity>
@@ -105,7 +110,7 @@ export default function HabitForm({
 }
 
 const styles = StyleSheet.create({
-  label: { fontSize: 14, fontWeight: '600', marginBottom: 8, color: COLOURS.textPrimary },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 8 },
   row: { marginBottom: 16 },
   toggleRow: { flexDirection: 'row', gap: 8 },
   toggleBtn: {
@@ -113,10 +118,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLOURS.border,
   },
-  toggleActive: { backgroundColor: COLOURS.primary, borderColor: COLOURS.primary },
-  toggleText: { color: COLOURS.textPrimary, fontWeight: '600' },
+  toggleText: { fontWeight: '600' },
   toggleTextActive: { color: '#fff' },
   categoryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   categoryBtn: {
@@ -125,5 +128,5 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
   },
-  categoryText: { fontSize: 13, fontWeight: '600', color: COLOURS.textPrimary },
+  categoryText: { fontSize: 13, fontWeight: '600' },
 });

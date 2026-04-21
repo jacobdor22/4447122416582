@@ -1,4 +1,4 @@
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 type FactCardProps = {
@@ -8,8 +8,10 @@ type FactCardProps = {
 };
 
 export default function FactCard({ title, fact, loading }: FactCardProps) {
+  const { colours: COLOURS } = useTheme();
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: COLOURS.primary }]}>
       <Text style={styles.title}>{title}</Text>
       {loading ? (
         <ActivityIndicator color="#fff" />
@@ -22,7 +24,6 @@ export default function FactCard({ title, fact, loading }: FactCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLOURS.primary,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,

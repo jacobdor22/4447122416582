@@ -1,4 +1,4 @@
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { StyleSheet, Text, View } from 'react-native';
 
 type EmptyStateProps = {
@@ -7,10 +7,12 @@ type EmptyStateProps = {
 };
 
 export default function EmptyState({ title, message }: EmptyStateProps) {
+  const { colours: COLOURS } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
+      <Text style={[styles.title, { color: COLOURS.textPrimary }]}>{title}</Text>
+      <Text style={[styles.message, { color: COLOURS.textSecondary }]}>{message}</Text>
     </View>
   );
 }
@@ -22,6 +24,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
   },
-  title: { fontSize: 20, fontWeight: 'bold', color: COLOURS.textPrimary, marginBottom: 8 },
-  message: { fontSize: 14, color: COLOURS.textSecondary, textAlign: 'center' },
+  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
+  message: { fontSize: 14, textAlign: 'center' },
 });

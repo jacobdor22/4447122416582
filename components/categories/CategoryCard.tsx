@@ -1,4 +1,4 @@
-import { COLOURS } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type CategoryCardProps = {
@@ -16,21 +16,23 @@ export default function CategoryCard({
   onEdit,
   onDelete,
 }: CategoryCardProps) {
+  const { colours: COLOURS } = useTheme();
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: COLOURS.card }]}>
       <View style={styles.left}>
         <View style={[styles.iconBox, { backgroundColor: colour + '20' }]}>
           <Text style={styles.icon}>{icon}</Text>
         </View>
         <View style={[styles.dot, { backgroundColor: colour }]} />
-        <Text style={styles.name}>{name}</Text>
+        <Text style={[styles.name, { color: COLOURS.textPrimary }]}>{name}</Text>
       </View>
       <View style={styles.actions}>
         <TouchableOpacity onPress={onEdit} style={styles.editBtn} accessibilityLabel={`Edit ${name}`}>
-          <Text style={styles.editText}>Edit</Text>
+          <Text style={[styles.editText, { color: COLOURS.primary }]}>Edit</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={onDelete} style={styles.deleteBtn} accessibilityLabel={`Delete ${name}`}>
-          <Text style={styles.deleteText}>Delete</Text>
+          <Text style={[styles.deleteText, { color: COLOURS.danger }]}>Delete</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -39,7 +41,6 @@ export default function CategoryCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLOURS.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -55,10 +56,10 @@ const styles = StyleSheet.create({
   iconBox: { width: 36, height: 36, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   icon: { fontSize: 18 },
   dot: { width: 10, height: 10, borderRadius: 5 },
-  name: { fontSize: 16, fontWeight: '600', color: COLOURS.textPrimary },
+  name: { fontSize: 16, fontWeight: '600' },
   actions: { flexDirection: 'row', gap: 8 },
   editBtn: { padding: 6 },
-  editText: { color: COLOURS.primary, fontWeight: '600' },
+  editText: { fontWeight: '600' },
   deleteBtn: { padding: 6 },
-  deleteText: { color: COLOURS.danger, fontWeight: '600' },
+  deleteText: { fontWeight: '600' },
 });
