@@ -33,6 +33,7 @@ export default function HabitsScreen() {
   const { user } = useAuth();
   const { colours: COLOURS } = useTheme();
   const router = useRouter();
+
   const [habitList, setHabitList] = useState<Habit[]>([]);
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -44,11 +45,13 @@ export default function HabitsScreen() {
   const [activeHabitIds, setActiveHabitIds] = useState<Set<number>>(new Set());
   const [streakMap, setStreakMap] = useState<Record<number, number>>({});
 
+  // expo router crashes if you navigate too early, small delay fixes it
   useEffect(() => {
     const timer = setTimeout(() => setReady(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  // send to login if not logged in
   useEffect(() => {
     if (!ready) return;
     if (!user) {
@@ -58,10 +61,12 @@ export default function HabitsScreen() {
     loadData();
   }, [ready, user]);
 
+  // recalculate active habits when filter changes
   useEffect(() => {
     loadActiveHabits();
   }, [dateRange, habitList]);
 
+  // work out start and end dates for whichever filter is selected
   const getDateRangeFilter = () => {
     const now = new Date();
     if (dateRange === 'today') {
@@ -78,6 +83,7 @@ export default function HabitsScreen() {
     return null;
   };
 
+  // only show habits that had logs in the selected date range
   const loadActiveHabits = async () => {
     if (dateRange === 'all') {
       setActiveHabitIds(new Set(habitList.map(h => h.id)));
@@ -90,6 +96,7 @@ export default function HabitsScreen() {
     setActiveHabitIds(new Set(filtered.map(l => l.habitId)));
   };
 
+  // go back day by day from today and count how many in a row
   const calculateStreak = (logs: { habitId: number; date: string }[], habitId: number): number => {
     const dates = logs
       .filter(l => l.habitId === habitId)
@@ -115,6 +122,7 @@ export default function HabitsScreen() {
     return streak;
   };
 
+  // pull habits, categories and logs from db then calculate streaks
   const loadData = async () => {
     const cats = await db.select().from(categories).where(eq(categories.userId, user!.id));
     const habs = await db.select().from(habits).where(eq(habits.userId, user!.id));
@@ -128,6 +136,7 @@ export default function HabitsScreen() {
     setStreakMap(streaks);
   };
 
+  // combines all three filters without needing extra state
   const filteredHabits = habitList.filter(h => {
     const matchesText = h.name.toLowerCase().includes(searchText.toLowerCase());
     const matchesCategory = selectedCategory === null || h.categoryId === selectedCategory;
@@ -161,6 +170,7 @@ export default function HabitsScreen() {
     loadData();
   };
 
+  // confirm before deleting so user doesn't lose data by accident
   const handleDelete = (id: number) => {
     Alert.alert('Delete Habit', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },

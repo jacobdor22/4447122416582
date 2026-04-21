@@ -33,6 +33,7 @@ export default function InsightsScreen() {
     loadFacts();
   }, [period]);
 
+  // fetch two separate motivational tips from the API
   const loadFacts = async () => {
     setLoadingDateFact(true);
     setLoadingStreakFact(true);
@@ -46,10 +47,18 @@ export default function InsightsScreen() {
 
   const loadData = async () => {
     if (!user) return;
+
+    // only get habits that belong to this user
     const habs = await db.select().from(habits).where(eq(habits.userId, user.id));
-    const logs = await db.select().from(habitLogs);
+
+    // filter logs to only include this user's habits
+    const habIds = habs.map(h => h.id);
+    const allLogs = await db.select().from(habitLogs);
+    const logs = allLogs.filter(l => habIds.includes(l.habitId));
+
     const now = new Date();
 
+    // filter logs down to the selected time period
     let filtered = logs;
     if (period === 'daily') {
       const today = now.toISOString().split('T')[0];
@@ -63,6 +72,7 @@ export default function InsightsScreen() {
       filtered = logs.filter(l => l.date >= start.toISOString().split('T')[0]);
     }
 
+    // build chart data — one bar per habit
     const labels = habs.map(h => h.name.length > 6 ? h.name.slice(0, 6) + '..' : h.name);
     const values = habs.map(h =>
       filtered.filter(l => l.habitId === h.id).reduce(
@@ -76,9 +86,11 @@ export default function InsightsScreen() {
     const maxIndex = values.indexOf(Math.max(...values));
     setMostActive(habs[maxIndex]?.name ?? 'None');
 
+    // completion rate is logs vs number of habits, not a hard cap
     const rate = habs.length > 0 ? Math.round((filtered.length / habs.length) * 100) : 0;
     setCompletionRate(rate);
 
+    // go back day by day to find the longest current streak
     if (habs.length > 0) {
       let maxStreak = 0;
       for (const hab of habs) {
