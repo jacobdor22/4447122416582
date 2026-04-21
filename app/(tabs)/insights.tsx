@@ -6,7 +6,8 @@ import { db } from '@/db/client';
 import { habitLogs, habits } from '@/db/schema';
 import { fetchDateFact, fetchStreakFact } from '@/utils/fetchNumberFact';
 import { eq } from 'drizzle-orm';
-import { useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 
@@ -28,10 +29,13 @@ export default function InsightsScreen() {
   const [loadingDateFact, setLoadingDateFact] = useState(true);
   const [loadingStreakFact, setLoadingStreakFact] = useState(true);
 
-  useEffect(() => {
-    loadData();
-    loadFacts();
-  }, [period]);
+  // reload data every time screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+      loadFacts();
+    }, [user, period])
+  );
 
   // fetch two separate motivational tips from the API
   const loadFacts = async () => {
@@ -54,7 +58,9 @@ export default function InsightsScreen() {
     // filter logs to only include this user's habits
     const habIds = habs.map(h => h.id);
     const allLogs = await db.select().from(habitLogs);
-    const logs = allLogs.filter(l => habIds.includes(l.habitId));
+    const logs = habIds.length > 0
+      ? allLogs.filter(l => habIds.includes(l.habitId))
+      : [];
 
     const now = new Date();
 
@@ -86,7 +92,7 @@ export default function InsightsScreen() {
     const maxIndex = values.indexOf(Math.max(...values));
     setMostActive(habs[maxIndex]?.name ?? 'None');
 
-    // completion rate is logs vs number of habits, not a hard cap
+    // completion rate is logs vs number of habits
     const rate = habs.length > 0 ? Math.round((filtered.length / habs.length) * 100) : 0;
     setCompletionRate(rate);
 

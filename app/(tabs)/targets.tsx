@@ -8,7 +8,8 @@ import { useTheme } from '@/context/ThemeContext';
 import { db } from '@/db/client';
 import { habitLogs, habits, targets } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
 
 type Target = {
@@ -32,9 +33,12 @@ export default function TargetsScreen() {
   const [showForm, setShowForm] = useState(false);
   const [editingTarget, setEditingTarget] = useState<Target | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // reload every time the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [user])
+  );
 
   const getDateRange = (period: string) => {
     const now = new Date();
@@ -56,16 +60,22 @@ export default function TargetsScreen() {
     setTargetList(tgts);
     setHabitList(habs);
 
+    // only count logs for this user's habits
+    const habIds = habs.map(h => h.id);
+    const allLogs = habIds.length > 0 ? await db.select().from(habitLogs) : [];
+    const userLogs = habIds.length > 0
+      ? (allLogs as any[]).filter(l => habIds.includes(l.habitId))
+      : [];
+
     const progress: Record<number, number> = {};
     for (const target of tgts) {
       const { start, end } = getDateRange(target.period);
-      const logs = await db.select().from(habitLogs);
-      const filtered = logs.filter(l => l.date >= start && l.date <= end);
+      const filtered = userLogs.filter((l: any) => l.date >= start && l.date <= end);
       if (target.habitId) {
-        const habitLogs2 = filtered.filter(l => l.habitId === target.habitId);
-        progress[target.id] = habitLogs2.reduce((sum, l) => sum + (l.completed ? 1 : (l.count ?? 0)), 0);
+        const habitLogs2 = filtered.filter((l: any) => l.habitId === target.habitId);
+        progress[target.id] = habitLogs2.reduce((sum: number, l: any) => sum + (l.completed ? 1 : (l.count ?? 0)), 0);
       } else {
-        progress[target.id] = filtered.reduce((sum, l) => sum + (l.completed ? 1 : (l.count ?? 0)), 0);
+        progress[target.id] = filtered.reduce((sum: number, l: any) => sum + (l.completed ? 1 : (l.count ?? 0)), 0);
       }
     }
     setProgressMap(progress);

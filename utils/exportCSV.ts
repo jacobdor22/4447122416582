@@ -30,15 +30,15 @@ export async function exportHabitsCSV(userId: number) {
   ];
 
   const csvContent = rows.map(row => row.join(',')).join('\n');
-  const fileUri = FileSystem.documentDirectory + 'habits_export.csv';
+  const path = FileSystem.cacheDirectory + 'habits_export.csv';
 
-  await FileSystem.writeAsStringAsync(fileUri, csvContent, {
+  await FileSystem.writeAsStringAsync(path, csvContent, {
     encoding: FileSystem.EncodingType.UTF8,
   });
 
   const isAvailable = await Sharing.isAvailableAsync();
   if (isAvailable) {
-    await Sharing.shareAsync(fileUri, {
+    await Sharing.shareAsync(path, {
       mimeType: 'text/csv',
       dialogTitle: 'Export Habits CSV',
     });

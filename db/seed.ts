@@ -10,7 +10,7 @@ export async function seedIfEmpty() {
   ]);
 
   await db.insert(categories).values([
-    { userId: 1, name: 'Fitness', colour: '#6C63FF', icon: 'Run' },
+    { userId: 1, name: 'Fitness', colour: '#16A34A', icon: 'Run' },
     { userId: 1, name: 'Learning', colour: '#43C59E', icon: 'Read' },
     { userId: 1, name: 'Health', colour: '#FF6584', icon: 'Health' },
     { userId: 1, name: 'Mindfulness', colour: '#FFB347', icon: 'Mind' },
