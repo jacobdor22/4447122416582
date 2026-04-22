@@ -1,8 +1,11 @@
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { openDatabaseSync } from 'expo-sqlite';
 
+// open the local SQLite database — creates the file if it doesn't exist
 const sqlite = openDatabaseSync('habits.db');
 
+// create all tables if they don't already exist
+// using IF NOT EXISTS means this is safe to run every time the app starts
 sqlite.execSync(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,6 +36,7 @@ sqlite.execSync(`
     completed INTEGER,
     count INTEGER,
     notes TEXT
+    -- note: no user_id here, logs are linked to users via habit_id
   );
   CREATE TABLE IF NOT EXISTS targets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,4 +47,5 @@ sqlite.execSync(`
   );
 `);
 
+// export a single db instance used across the whole app
 export const db = drizzle(sqlite);
